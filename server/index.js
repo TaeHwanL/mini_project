@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require("cors")
 const pool = require("./db")
+const crypto = require('crypto');
 
 //middleware
 app.use(cors())
@@ -30,7 +31,7 @@ app.get("/search", async(req, res) => {
         const page = req.query.page;
         const state = req.query.state;
         const complete = req.query.complete;
-        const searchtxt = req.query.searchtxt;
+        const searchtxt = req.query.searchtxt;  
 
         let WHERE = "WHERE 1=1 ";
 
@@ -137,6 +138,29 @@ app.get("/searchcnt", async(req, res) => {
         console.log(err.message)
     }
 })
+
+// login
+app.post("/login", async(req, res) => {
+    try {
+        const {
+            userId, 
+            password
+        } = req.body;
+
+        const user = await pool.query(
+            "SELECT * "
+          + "FROM app_member "
+          + "WHERE member_id = '" + userId + "' AND pwd = '" + crypto.createHash('sha256').update(password).digest('base64') + "' "
+        );
+
+        if (Object.keys(user.rows).length) {
+            res.json("ok " + user.rows)
+        }
+    } catch (err) {
+        console.log("err : " + err.message)
+    }
+})
+
 
 //delete a todo
 

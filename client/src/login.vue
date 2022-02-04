@@ -4,11 +4,11 @@
   <!-- <router-view></router-view> -->
     <div class="mb-3">
       <label for="memid" class="form-label">아이디</label>
-      <input type="email" class="form-control" id="memid" placeholder="아이디">
+      <input type="email" class="form-control" id="memid" v-model="memid" placeholder="아이디">
     </div>
     <div class="mb-3">
       <label for="mempw" class="form-label">비밀번호</label>
-      <input type="password" class="form-control" id="mempw" placeholder="비밀번호">
+      <input type="password" class="form-control" id="mempw" v-model="mempw" placeholder="비밀번호">
     </div>
     <div class="mb-3">
       <div class="form-check">
@@ -30,8 +30,8 @@ export default {
     name: "app",
     data() {
       return {
-        id: null,
-        password: null
+        memid: null,
+        mempw: null
       }
     },
     // computed: {
@@ -41,9 +41,16 @@ export default {
       // ...mapActions(["login"])
       test() {
         axios
-          .get("https://reqres.in/api/users?page=2")
+          .post("http://localhost:5000/login", {
+            userId: this.memid, 
+            password: this.mempw,
+          })
           .then(res => {
-            console.log(res)
+            if (Object.keys(res.data).length) {
+              console.log(res.data)
+            } else {
+              alert("아이디 또는 비밀번호를 확인하세요.")
+            }
           })
           .catch(err => {
             console.log(err)

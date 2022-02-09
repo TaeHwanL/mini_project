@@ -2,7 +2,9 @@ const express = require('express')
 const app = express()
 const cors = require("cors")
 const pool = require("./db")
-const crypto = require('crypto');
+const crypto = require('crypto')
+const jwt = require('./jwt')
+const { response } = require('express')
 
 //middleware
 app.use(cors())
@@ -151,10 +153,18 @@ app.post("/login", async(req, res) => {
             "SELECT * "
           + "FROM app_member "
           + "WHERE member_id = '" + userId + "' AND pwd = '" + crypto.createHash('sha256').update(password).digest('base64') + "' "
-        );
+        );        
 
         if (Object.keys(user.rows).length) {
-            res.json("ok " + user.rows)
+            const jwtToken = await jwt.sign(user)
+            console.log(jwtToken)
+            // const verify = await jwt.verify(jwtToken.token);
+            res.json({success:true, accessToken:jwtToken.token});
+            // res.send(jwtToken.token +"       "+ verify);
+            // return res.status(200).send(util.success(200, responseMsg.LOGIN_SUCCESS, {
+            //     /* 생성된 Token을 클라이언트에게 Response */
+            //      token: jwtToken.token
+            //  }))
         }
     } catch (err) {
         console.log("err : " + err.message)

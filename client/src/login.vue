@@ -40,6 +40,7 @@ export default {
     methods: {
       // ...mapActions(["login"])
       test() {
+        (this.memid === '' || this.memid === null) || (this.mempw === '' || this.mempw === null) ? alert("아이디 또는 비밀번호를 입력하세요.") :
         axios
           .post("http://localhost:5000/login", {
             userId: this.memid, 
@@ -54,9 +55,6 @@ export default {
           })
           .catch(err => {
             console.log(err)
-          })
-          .then(() => {
-
           })
       }
     }

@@ -1,7 +1,6 @@
 <template>
 <div id="app">
-  <!-- <router-link to="App">dd</router-link> -->
-  <!-- <router-view></router-view> -->
+  <router-view></router-view>
     <div class="mb-3">
       <label for="memid" class="form-label">아이디</label>
       <input type="email" class="form-control" id="memid" v-model="memid" placeholder="아이디">
@@ -12,7 +11,7 @@
     </div>
     <div class="mb-3">
       <div class="form-check">
-        <input type="checkbox" class="form-check-input" id="dropdownCheck">
+        <input type="checkbox" class="form-check-input" id="savechk" v-model="savechk">
         <label class="form-check-label" for="dropdownCheck">
           아이디 저장
         </label>
@@ -23,22 +22,19 @@
 </template>
 
 <script>
-// import { mapState, mapActions } from "vuex"
 import axios from 'axios';
+import VueCookies from 'vue-cookies'
 
 export default {
     name: "app",
     data() {
       return {
         memid: null,
-        mempw: null
+        mempw: null,
+        savechk: false
       }
     },
-    // computed: {
-    //   ...mapState(["isLogin", "isLoginError"])
-    // },
     methods: {
-      // ...mapActions(["login"])
       test() {
         (this.memid === '' || this.memid === null) || (this.mempw === '' || this.mempw === null) ? alert("아이디 또는 비밀번호를 입력하세요.") :
         axios
@@ -47,15 +43,29 @@ export default {
             password: this.mempw,
           })
           .then(res => {
-            if (Object.keys(res.data).length) {
-              console.log(res.data)
+            if (res.data.success === false) {
+              alert(res.data.err)
             } else {
-              alert("아이디 또는 비밀번호를 확인하세요.")
+              VueCookies.set('accessToken', res.data.accessToken)
+              if (this.savechk === true) {
+                VueCookies.set('savechk', this.memid)
+              } else {
+                if (VueCookies.get('savechk') !== null) {
+                  VueCookies.remove('savechk')
+                }
+              }
+              this.$router.push("/list")
             }
           })
           .catch(err => {
             console.log(err)
           })
+      }
+    },
+    async created() {
+      if (VueCookies.get('savechk') !== null) {
+        this.savechk = true
+        this.memid = VueCookies.get('savechk')
       }
     }
 }

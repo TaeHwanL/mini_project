@@ -141,6 +141,15 @@ app.get("/searchcnt", async(req, res) => {
     }
 })
 
+app.use(function(req, res, next) {
+
+    //모든 도메인의 요청을 허용하지 않으면 웹브라우저에서 CORS 에러를 발생시킨다.
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+    next();
+});
+
 // login
 app.post("/login", async(req, res) => {
     try {
@@ -157,20 +166,40 @@ app.post("/login", async(req, res) => {
 
         if (Object.keys(user.rows).length) {
             const jwtToken = await jwt.sign(user)
-            console.log(jwtToken)
-            // const verify = await jwt.verify(jwtToken.token);
+            
             res.json({success:true, accessToken:jwtToken.token});
-            // res.send(jwtToken.token +"       "+ verify);
-            // return res.status(200).send(util.success(200, responseMsg.LOGIN_SUCCESS, {
-            //     /* 생성된 Token을 클라이언트에게 Response */
-            //      token: jwtToken.token
-            //  }))
+        } else {
+            res.json({success:false, err:"아이디 또는 비밀번호를 확인하세요."});
         }
     } catch (err) {
-        console.log("err : " + err.message)
+        res.json({success:false, err:err.message});
     }
 })
 
+// getUser
+app.get("/getUser", async(req, res) => {
+    try {
+        const accessToken = req.headers.authorization.split('Bearer ')[1]
+        console.log(accessToken)
+        
+        const userinfo = await jwt.verify(accessToken)
+        console.log(userinfo)
+
+        res.json(userinfo);
+
+        
+
+        // if (Object.keys(user.rows).length) {
+        //     const userinfo = await jwt.verify(user)
+            
+        //     res.json(userinfo);
+        // } else {
+        //     res.json({success:false, err:"아이디 또는 비밀번호를 확인하세요."});
+        // }
+    } catch (err) {
+        res.json({success:false, err:err.message});
+    }
+})
 
 //delete a todo
 

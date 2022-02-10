@@ -1,8 +1,7 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
-import list from "./views/list"
-import detail from "./views/detail"
-import App from "./App"
+import list from "./list"
+import login from "./login"
 
 Vue.use(VueRouter);
 
@@ -11,16 +10,12 @@ const router = new VueRouter({
     routes: [
         {
             path:"/", 
+            component: login
+        },
+        {
+            path:"/list", 
             component: list
-        },
-        {
-            path:"/detail", 
-            component: detail
-        },
-        {
-            path:"/App", 
-            component: App
-        },
+        }
     ]
 });
 

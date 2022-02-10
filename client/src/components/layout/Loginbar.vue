@@ -12,8 +12,8 @@
 
                 </ul>
                 <form class="d-flex">
-                    <a class="navbar-brand" href="#">id</a>
-                    <button class="btn btn-outline-success" type="submit">Logout</button>
+                    <div class="navbar-brand" >{{name}}</div>
+                    <button class="btn btn-outline-success" type="submit" @click="logout">Logout</button>
                 </form>
             </div>
         </div>
@@ -22,8 +22,35 @@
 </template>
 
 <script>
+import axios from 'axios';
+import VueCookies from 'vue-cookies'
+
 export default {
-    name: "Loginbar"
+    name: "Loginbar",
+    data() {
+        return {
+            id: '',
+            name: ''
+        }
+    },
+    methods: {
+      logout() {
+          VueCookies.remove('accessToken')
+      }
+    },
+    async created() {
+        axios.get("http://localhost:5000/getUser", {
+            headers: {
+                Authorization: "Bearer " + VueCookies.get('accessToken')
+            }
+        }).then(res => {
+            this.id = res.data.id
+            this.name = res.data.name
+          })
+          .catch(err => {
+            console.log(err)
+          })
+    }
 }
 </script>
 

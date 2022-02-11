@@ -12,8 +12,9 @@
 
                 </ul>
                 <form class="d-flex">
-                    <div class="navbar-brand" >{{name}}</div>
-                    <button class="btn btn-outline-success" type="submit" @click="logout">Logout</button>
+                    <div v-if="$store.state.memname === undefined" class="navbar-brand">로그인을 해주세요.</div>
+                    <div v-else class="navbar-brand">{{ $store.state.memname }}</div>
+                    <button class="btn btn-outline-success" v-show="$store.state.memname !== undefined"  type="submit" @click="logout">Logout</button>
                 </form>
             </div>
         </div>
@@ -29,13 +30,13 @@ export default {
     name: "Loginbar",
     data() {
         return {
-            id: '',
-            name: ''
+            
         }
     },
     methods: {
       logout() {
           VueCookies.remove('accessToken')
+          this.$store.state.memname = ""
       }
     },
     async created() {
@@ -44,8 +45,7 @@ export default {
                 Authorization: "Bearer " + VueCookies.get('accessToken')
             }
         }).then(res => {
-            this.id = res.data.id
-            this.name = res.data.name
+            this.$store.state.memname = res.data.name
           })
           .catch(err => {
             console.log(err)

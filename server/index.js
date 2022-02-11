@@ -59,10 +59,6 @@ app.get("/search", async(req, res) => {
         + WHERE
         + "\nORDER BY recruit_idx DESC\n"
         + "LIMIT 10 OFFSET (" + page + " - 1) * 10\n\n"
-
-        // + "SELECT COUNT(*)\n"
-        // + "FROM recruit r left join organization o on r.organ_idx = o.organ_idx\n"
-        // + WHERE
         );
         
         res.json(allAnnouncement.rows)
@@ -127,12 +123,25 @@ app.get("/recruit/:id", async(req, res) => {
 //get count
 app.get("/searchcnt", async(req, res) => {
     try {
+        const complete = req.query.complete;
+        const searchtxt = req.query.searchtxt;
+
+        let WHERE = "WHERE 1=1 ";
+
+        if (complete == "true") {
+            WHERE += "AND is_complete = true "
+        }
+
+        if (searchtxt.trim() != null) {
+            WHERE += "AND recruit_title like '%" + searchtxt.trim() + "%' "
+        }
+
         const cnt = await pool.query(
           "SELECT "
-        + "(SELECT COUNT(*) FROM recruit) as \"all\", "
-        + "(SELECT COUNT(*) FROM recruit WHERE apply_start_time <= now() AND apply_end_time >= now()) as \"ing\", "
-        + "(SELECT COUNT(*) FROM recruit WHERE apply_end_time < now()) as \"end\", "
-        + "(SELECT COUNT(*) FROM recruit WHERE apply_start_time > now()) as \"wait\" "
+        + "(SELECT COUNT(*) FROM recruit " + WHERE + ") as \"all\", "
+        + "(SELECT COUNT(*) FROM recruit " + WHERE + " AND apply_start_time <= now() AND apply_end_time >= now()) as \"ing\", "
+        + "(SELECT COUNT(*) FROM recruit " + WHERE + " AND apply_end_time < now()) as \"end\", "
+        + "(SELECT COUNT(*) FROM recruit " + WHERE + " AND apply_start_time > now()) as \"wait\" "
         );
 
         res.json(cnt.rows)

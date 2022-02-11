@@ -54,6 +54,7 @@ export default {
                   VueCookies.remove('savechk')
                 }
               }
+              
               this.$router.push("/list")
             }
           })

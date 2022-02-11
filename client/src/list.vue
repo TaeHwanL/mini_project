@@ -90,6 +90,8 @@
 
 <script>
 import PostService from './PostService'
+import axios from 'axios';
+import VueCookies from 'vue-cookies'
 
 export default {
     name: "App",
@@ -114,6 +116,7 @@ export default {
             try {
                 this.posts = await PostService.getPosts(this.state, this.currentPageIndex, this.complete, this.searchtxt);
                 this.totals = await PostService.gettotal(this.state, this.complete, this.searchtxt);
+                this.cnts = await PostService.getPostCnt(this.complete, this.searchtxt);
             } catch (err) {
                 this.error = err.message;
             }
@@ -131,8 +134,17 @@ export default {
         }
     },
     async created() {
+        axios.get("http://localhost:5000/getUser", {
+            headers: {
+                Authorization: "Bearer " + VueCookies.get('accessToken')
+            }
+        }).then(res => {
+            this.$store.state.memname = res.data.name
+        }).catch(err => {
+            console.log(err)
+        })
+
         this.movepage(this.currentPageIndex);
-        this.cnts = await PostService.getPostCnt();
     },    
 };
 

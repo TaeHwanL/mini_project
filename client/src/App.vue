@@ -1,6 +1,6 @@
 <template>
 <div id="app">
-    <loginbar :disabled="$route.matched.some(({ name }) => name === '/')"/>
+    <loginbar />
     <router-view></router-view>
 </div>
 </template>
@@ -13,11 +13,6 @@ export default {
     name: "app",
     components: {
         Loginbar,
-    },
-    methods: {
-      urlcheck() {
-
-      }
     },
     async created() {
         if (VueCookies.isKey('accessToken')) { 

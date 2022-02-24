@@ -12,8 +12,9 @@
 
                 </ul>
                 <form class="d-flex">
-                    <a class="navbar-brand" href="#">id</a>
-                    <button class="btn btn-outline-success" type="submit">Logout</button>
+                    <div v-if="$store.state.memname === undefined" class="navbar-brand">로그인을 해주세요.</div>
+                    <div v-else class="navbar-brand">{{ $store.state.memname }}</div>
+                    <button class="btn btn-outline-success" v-show="$store.state.memname !== undefined"  type="submit" @click="logout">Logout</button>
                 </form>
             </div>
         </div>
@@ -22,8 +23,34 @@
 </template>
 
 <script>
+import axios from 'axios';
+import VueCookies from 'vue-cookies'
+
 export default {
-    name: "Loginbar"
+    name: "Loginbar",
+    data() {
+        return {
+            
+        }
+    },
+    methods: {
+      logout() {
+          VueCookies.remove('accessToken')
+          this.$store.state.memname = ""
+      }
+    },
+    async created() {
+        axios.get("http://localhost:5000/getUser", {
+            headers: {
+                Authorization: "Bearer " + VueCookies.get('accessToken')
+            }
+        }).then(res => {
+            this.$store.state.memname = res.data.name
+          })
+          .catch(err => {
+            console.log(err)
+          })
+    }
 }
 </script>
 

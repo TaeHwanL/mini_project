@@ -2,6 +2,9 @@ const express = require('express')
 const app = express()
 const cors = require("cors")
 const pool = require("./db")
+const crypto = require('crypto')
+const jwt = require('./jwt')
+const { response } = require('express')
 
 //middleware
 app.use(cors())
@@ -30,7 +33,11 @@ app.get("/search", async(req, res) => {
         const page = req.query.page;
         const state = req.query.state;
         const complete = req.query.complete;
+<<<<<<< HEAD
         const searchtxt = req.query.searchtxt;
+=======
+        const searchtxt = req.query.searchtxt;  
+>>>>>>> 8acd3b6194bb7fcac3a604a99aa6540086bffd8b
 
         let WHERE = "WHERE 1=1 ";
 
@@ -56,10 +63,13 @@ app.get("/search", async(req, res) => {
         + WHERE
         + "\nORDER BY recruit_idx DESC\n"
         + "LIMIT 10 OFFSET (" + page + " - 1) * 10\n\n"
+<<<<<<< HEAD
 
         // + "SELECT COUNT(*)\n"
         // + "FROM recruit r left join organization o on r.organ_idx = o.organ_idx\n"
         // + WHERE
+=======
+>>>>>>> 8acd3b6194bb7fcac3a604a99aa6540086bffd8b
         );
         
         res.json(allAnnouncement.rows)
@@ -124,17 +134,90 @@ app.get("/recruit/:id", async(req, res) => {
 //get count
 app.get("/searchcnt", async(req, res) => {
     try {
+        const complete = req.query.complete;
+        const searchtxt = req.query.searchtxt;
+
+        let WHERE = "WHERE 1=1 ";
+
+        if (complete == "true") {
+            WHERE += "AND is_complete = true "
+        }
+
+        if (searchtxt.trim() != null) {
+            WHERE += "AND recruit_title like '%" + searchtxt.trim() + "%' "
+        }
+
         const cnt = await pool.query(
           "SELECT "
-        + "(SELECT COUNT(*) FROM recruit) as \"all\", "
-        + "(SELECT COUNT(*) FROM recruit WHERE apply_start_time <= now() AND apply_end_time >= now()) as \"ing\", "
-        + "(SELECT COUNT(*) FROM recruit WHERE apply_end_time < now()) as \"end\", "
-        + "(SELECT COUNT(*) FROM recruit WHERE apply_start_time > now()) as \"wait\" "
+        + "(SELECT COUNT(*) FROM recruit " + WHERE + ") as \"all\", "
+        + "(SELECT COUNT(*) FROM recruit " + WHERE + " AND apply_start_time <= now() AND apply_end_time >= now()) as \"ing\", "
+        + "(SELECT COUNT(*) FROM recruit " + WHERE + " AND apply_end_time < now()) as \"end\", "
+        + "(SELECT COUNT(*) FROM recruit " + WHERE + " AND apply_start_time > now()) as \"wait\" "
         );
 
         res.json(cnt.rows)
     } catch (err) {
         console.log(err.message)
+    }
+})
+
+app.use(function(req, res, next) {
+
+    //모든 도메인의 요청을 허용하지 않으면 웹브라우저에서 CORS 에러를 발생시킨다.
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+    next();
+});
+
+// login
+app.post("/login", async(req, res) => {
+    try {
+        const {
+            userId, 
+            password
+        } = req.body;
+
+        const user = await pool.query(
+            "SELECT * "
+          + "FROM app_member "
+          + "WHERE member_id = '" + userId + "' AND pwd = '" + crypto.createHash('sha256').update(password).digest('base64') + "' "
+        );        
+
+        if (Object.keys(user.rows).length) {
+            const jwtToken = await jwt.sign(user)
+            
+            res.json({success:true, accessToken:jwtToken.token});
+        } else {
+            res.json({success:false, err:"아이디 또는 비밀번호를 확인하세요."});
+        }
+    } catch (err) {
+        res.json({success:false, err:err.message});
+    }
+})
+
+// getUser
+app.get("/getUser", async(req, res) => {
+    try {
+        const accessToken = req.headers.authorization.split('Bearer ')[1]
+        console.log(accessToken)
+        
+        const userinfo = await jwt.verify(accessToken)
+        console.log(userinfo)
+
+        res.json(userinfo);
+
+        
+
+        // if (Object.keys(user.rows).length) {
+        //     const userinfo = await jwt.verify(user)
+            
+        //     res.json(userinfo);
+        // } else {
+        //     res.json({success:false, err:"아이디 또는 비밀번호를 확인하세요."});
+        // }
+    } catch (err) {
+        res.json({success:false, err:err.message});
     }
 })
 

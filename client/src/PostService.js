@@ -43,11 +43,11 @@ class PostService {
         });
     }
     
-    static getPostCnt() {        
+    static getPostCnt(complete, searchtxt) {        
         return new Promise((resolve, reject) => {
             try {
                 let data = '';
-                axios.get('http://localhost:5000/searchcnt').then(function(response) {
+                axios.get('http://localhost:5000/searchcnt?complete=' + complete + '&searchtxt=' + searchtxt).then(function(response) {
                     data = response.data;
                     
                     resolve(

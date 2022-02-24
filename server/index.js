@@ -33,11 +33,7 @@ app.get("/search", async(req, res) => {
         const page = req.query.page;
         const state = req.query.state;
         const complete = req.query.complete;
-<<<<<<< HEAD
-        const searchtxt = req.query.searchtxt;
-=======
         const searchtxt = req.query.searchtxt;  
->>>>>>> 8acd3b6194bb7fcac3a604a99aa6540086bffd8b
 
         let WHERE = "WHERE 1=1 ";
 
@@ -63,13 +59,6 @@ app.get("/search", async(req, res) => {
         + WHERE
         + "\nORDER BY recruit_idx DESC\n"
         + "LIMIT 10 OFFSET (" + page + " - 1) * 10\n\n"
-<<<<<<< HEAD
-
-        // + "SELECT COUNT(*)\n"
-        // + "FROM recruit r left join organization o on r.organ_idx = o.organ_idx\n"
-        // + WHERE
-=======
->>>>>>> 8acd3b6194bb7fcac3a604a99aa6540086bffd8b
         );
         
         res.json(allAnnouncement.rows)

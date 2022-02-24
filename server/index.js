@@ -25,18 +25,80 @@ app.post("/todos", async (req, res) => {
 });
 
 //get all Announcements(paging)
-app.get("/search/:page", async(req, res) => {
+app.get("/search", async(req, res) => {
     try {
-        const { page } = req.params;
+        const page = req.query.page;
+        const state = req.query.state;
+        const complete = req.query.complete;
+        const searchtxt = req.query.searchtxt;
+
+        let WHERE = "WHERE 1=1 ";
+
+        if (state == "ing") {
+            WHERE += "AND r.apply_start_time <= now() AND r.apply_end_time >= now() "
+        } else if (state == "end") {
+            WHERE += "AND r.apply_end_time < now() "
+        } else if (state == "wait") {
+            WHERE += "AND r.apply_start_time > now() "
+        }
+
+        if (complete == "true") {
+            WHERE += "AND r.is_complete = true "
+        }
+
+        if (searchtxt.trim() != null) {
+            WHERE += "AND r.recruit_title like '%" + searchtxt.trim() + "%' "
+        }
 
         const allAnnouncement = await pool.query(
-          "SELECT r.recruit_idx, o.organ_name, r.recruit_title, r.apply_start_time, r.apply_end_time, r.register_id, r.register_time, r.is_complete "
-        + "FROM recruit r left join organization o on r.organ_idx = o.organ_idx "
-        + "ORDER BY recruit_idx DESC "
-        + "LIMIT 10 OFFSET ($1 - 1) * 10", [page]
-        );
+          "SELECT r.recruit_idx, o.organ_name, r.recruit_title, CASE WHEN (apply_start_time <= now() AND apply_end_time >= now()) THEN '접수중' WHEN (apply_end_time < now()) THEN '마감' WHEN (apply_start_time > now()) THEN '대기중' END as \"state\", r.apply_start_time, r.apply_end_time, r.register_id, r.register_time, r.is_complete\n"
+        + "FROM recruit r left join organization o on r.organ_idx = o.organ_idx\n"
+        + WHERE
+        + "\nORDER BY recruit_idx DESC\n"
+        + "LIMIT 10 OFFSET (" + page + " - 1) * 10\n\n"
 
+        // + "SELECT COUNT(*)\n"
+        // + "FROM recruit r left join organization o on r.organ_idx = o.organ_idx\n"
+        // + WHERE
+        );
+        
         res.json(allAnnouncement.rows)
+    } catch (err) {
+        console.log(err.message)
+    }
+})
+
+app.get("/total", async(req, res) => {
+    try {
+        const state = req.query.state;
+        const complete = req.query.complete;
+        const searchtxt = req.query.searchtxt;
+
+        let WHERE = "WHERE 1=1 ";
+
+        if (state == "ing") {
+            WHERE += "AND r.apply_start_time <= now() AND r.apply_end_time >= now() "
+        } else if (state == "end") {
+            WHERE += "AND r.apply_end_time < now() "
+        } else if (state == "wait") {
+            WHERE += "AND r.apply_start_time > now() "
+        }
+
+        if (complete == "true") {
+            WHERE += "AND r.is_complete = true "
+        }
+
+        if (searchtxt.trim() != null) {
+            WHERE += "AND r.recruit_title like '%" + searchtxt.trim() + "%' "
+        }
+
+        const allcnt = await pool.query(
+            "SELECT COUNT(*)\n"
+            + "FROM recruit r left join organization o on r.organ_idx = o.organ_idx\n"
+            + WHERE
+        );
+        
+        res.json(allcnt.rows)
     } catch (err) {
         console.log(err.message)
     }

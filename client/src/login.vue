@@ -22,34 +22,13 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-// import { mapState, mapActions } from "vuex"
-import axios from 'axios';
-=======
 import axios from 'axios';
 import VueCookies from 'vue-cookies'
->>>>>>> 8acd3b6194bb7fcac3a604a99aa6540086bffd8b
 
 export default {
     name: "app",
     data() {
       return {
-<<<<<<< HEAD
-        id: null,
-        password: null
-      }
-    },
-    // computed: {
-    //   ...mapState(["isLogin", "isLoginError"])
-    // },
-    methods: {
-      // ...mapActions(["login"])
-      test() {
-        axios
-          .get("https://reqres.in/api/users?page=2")
-          .then(res => {
-            console.log(res)
-=======
         memid: null,
         mempw: null,
         savechk: false
@@ -78,23 +57,16 @@ export default {
               
               this.$router.push("/list")
             }
->>>>>>> 8acd3b6194bb7fcac3a604a99aa6540086bffd8b
           })
           .catch(err => {
             console.log(err)
           })
-<<<<<<< HEAD
-          .then(() => {
-
-          })
-=======
       }
     },
     async created() {
       if (VueCookies.get('savechk') !== null) {
         this.savechk = true
         this.memid = VueCookies.get('savechk')
->>>>>>> 8acd3b6194bb7fcac3a604a99aa6540086bffd8b
       }
     }
 }

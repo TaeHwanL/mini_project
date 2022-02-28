@@ -166,7 +166,7 @@ app.post("/login", async(req, res) => {
             userId, 
             password
         } = req.body;
-
+        
         const user = await pool.query(
             "SELECT * "
           + "FROM app_member "

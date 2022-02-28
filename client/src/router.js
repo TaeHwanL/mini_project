@@ -13,19 +13,9 @@ const router = new VueRouter({
             component: login
         },
         {
-<<<<<<< HEAD
-            path:"/detail", 
-            component: detail
-        },
-        {
-            path:"/App", 
-            component: App
-        },
-=======
             path:"/list", 
             component: list
         }
->>>>>>> 8acd3b6194bb7fcac3a604a99aa6540086bffd8b
     ]
 });
 

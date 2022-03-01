@@ -1,7 +1,7 @@
-import Vue from "vue"
-import VueRouter from "vue-router"
-import list from "./list"
-import login from "./login"
+import Vue from "vue";
+import VueRouter from "vue-router";
+import list from "../list"
+import login from "../login"
 
 Vue.use(VueRouter);
 

@@ -9,7 +9,12 @@ const pool = require("./db");
 const jwt = require("./jwt");
 
 //middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -274,7 +279,10 @@ app.get("/refresh", async (req, res) => {
 
         const userinfo = await jwt.verify(jwtToken.accesstoken);
 
-        res.cookie("test", "test", { path: "localhost:8080" });
+        res.cookie("test", "test", {
+          expires: new Date(Date.now() + 900000),
+          path: "localhost:8080",
+        });
         res.cookie("accessToken", jwtToken.accesstoken);
 
         console.log(req.cookies);

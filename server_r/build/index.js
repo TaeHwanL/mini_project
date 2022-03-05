@@ -48,7 +48,10 @@ var app = (0, express_1.default)();
 var pool = require("./db");
 var jwt = require("./jwt");
 //middleware
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: true,
+    credentials: true,
+}));
 app.use(express_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use((0, cookie_parser_1.default)());
@@ -335,7 +338,10 @@ app.get("/refresh", function (req, res) { return __awaiter(void 0, void 0, void 
                 return [4 /*yield*/, jwt.verify(jwtToken.accesstoken)];
             case 6:
                 userinfo_1 = _a.sent();
-                res.cookie("test", "test", { path: "http://localhost:8080" });
+                res.cookie("test", "test", {
+                    expires: new Date(Date.now() + 900000),
+                    path: "localhost:8080",
+                });
                 res.cookie("accessToken", jwtToken.accesstoken);
                 console.log(req.cookies);
                 res.json({

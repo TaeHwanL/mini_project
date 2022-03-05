@@ -62,11 +62,17 @@ export default {
         if (res.data == "false") {
           VueCookies.remove("accessToken");
           axios
-            .get("http://localhost:5000/refresh", {
-              headers: {
-                Authorization: "Bearer " + VueCookies.get("refreshToken"),
+            .get(
+              "http://localhost:5000/refresh",
+              {
+                headers: {
+                  Authorization: "Bearer " + VueCookies.get("refreshToken"),
+                },
               },
-            })
+              {
+                withCredentials: true,
+              }
+            )
             .then((res) => {
               console.log(res, res.data);
               if (res.data == "false") {

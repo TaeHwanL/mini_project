@@ -68,10 +68,8 @@ export default {
                 headers: {
                   Authorization: "Bearer " + VueCookies.get("refreshToken"),
                 },
-              },
-              {
                 withCredentials: true,
-              }
+              },
             )
             .then((res) => {
               console.log(res, res.data);

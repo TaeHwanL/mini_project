@@ -3,7 +3,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node ./build/index.js",
-    "dev:server": "nodemon --watch src --exec 'npx' 'ts-node' src/index.ts"
+    "dev:server": "nodemon --watch *.ts --exec ts-node index.ts"
   },
   "dependencies": {
     "body-parser": "^1.19.2",

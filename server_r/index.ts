@@ -180,17 +180,6 @@ app.get("/searchcnt", async (req, res) => {
   }
 });
 
-app.use(function (req, res, next) {
-  //모든 도메인의 요청을 허용하지 않으면 웹브라우저에서 CORS 에러를 발생시킨다.
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type, Authorization",
-  );
-  next();
-});
-
 // login
 app.post("/login", async (req, res) => {
   try {
@@ -281,9 +270,9 @@ app.get("/refresh", async (req, res) => {
 
         res.cookie("test", "test", {
           expires: new Date(Date.now() + 900000),
-          path: "localhost:8080",
+          path: "/",
         });
-        res.cookie("accessToken", jwtToken.accesstoken);
+        // res.cookie("accessToken", jwtToken.accesstoken);
 
         console.log(req.cookies);
         res.json({

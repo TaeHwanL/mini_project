@@ -200,10 +200,18 @@ app.post("/login", async (req, res) => {
 
       console.log(jwtToken);
 
+      res.cookie("accessToken", jwtToken.accesstoken, {
+        // expires: new Date(Date.now() + 900000),
+        path: "/",
+      });
+
+      res.cookie("refreshToken", jwtToken.refreshtoken, {
+        // expires: new Date(Date.now() + 900000),
+        path: "/",
+      });
+
       res.json({
         success: true,
-        accessToken: jwtToken.accesstoken,
-        refreshToken: jwtToken.refreshtoken,
       });
     } else {
       res.json({ success: false, err: "아이디 또는 비밀번호를 확인하세요." });
@@ -268,17 +276,15 @@ app.get("/refresh", async (req, res) => {
 
         const userinfo = await jwt.verify(jwtToken.accesstoken);
 
-        res.cookie("test", "test", {
-          expires: new Date(Date.now() + 900000),
+        res.cookie("accessToken", jwtToken.accesstoken, {
+          // expires: new Date(Date.now() + 900000),
           path: "/",
         });
-        // res.cookie("accessToken", jwtToken.accesstoken);
 
         console.log(req.cookies);
         res.json({
           success: true,
           userinfo: userinfo,
-          accessToken: jwtToken.accesstoken,
         });
       } else {
         res.json({ success: false, err: "아이디 또는 비밀번호를 확인하세요." });

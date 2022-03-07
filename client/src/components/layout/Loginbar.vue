@@ -46,8 +46,8 @@ export default {
   },
   methods: {
     logout() {
-      VueCookies.remove("accessToken");
-      this.$store.state.memname = "";
+      //모든 쿠키 다 지우기
+      VueCookies.keys().forEach((cookie) => VueCookies.remove(cookie));
     },
   },
   async created() {
@@ -80,7 +80,6 @@ export default {
                   alert(res.data.err);
                 } else {
                   this.$store.state.memname = res.data.name;
-                  VueCookies.set("accessToken", res.data.accessToken);
                 }
               }
             })

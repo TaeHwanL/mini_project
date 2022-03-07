@@ -62,13 +62,14 @@ export default {
             .post("http://localhost:5000/login", {
               userId: this.memid,
               password: this.mempw,
+            },
+            {
+              withCredentials: true,
             })
             .then((res) => {
               if (res.data.success === false) {
                 alert(res.data.err);
               } else {
-                VueCookies.set("accessToken", res.data.accessToken);
-                VueCookies.set("refreshToken", res.data.refreshToken);
                 this.$store.state.memname = this.memid;
                 if (this.savechk === true) {
                   VueCookies.set("savechk", this.memid);

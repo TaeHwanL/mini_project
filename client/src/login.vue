@@ -39,7 +39,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import VueCookies from "vue-cookies";
 
 export default {
@@ -58,8 +57,8 @@ export default {
       this.mempw === "" ||
       this.mempw === null
         ? alert("아이디 또는 비밀번호를 입력하세요.")
-        : axios
-            .post("http://localhost:5000/login", {
+        : this.$axios
+            .post("/login", {
               userId: this.memid,
               password: this.mempw,
             },

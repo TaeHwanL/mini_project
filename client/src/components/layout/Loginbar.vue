@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import VueCookies from "vue-cookies";
 
 export default {
@@ -51,8 +50,8 @@ export default {
     },
   },
   async created() {
-    axios
-      .get("http://localhost:5000/getUser", {
+    this.$axios
+      .get("/getUser", {
         headers: {
           Authorization: "Bearer " + VueCookies.get("accessToken"),
         },
@@ -61,9 +60,9 @@ export default {
       .then((res) => {
         if (res.data == "false") {
           VueCookies.remove("accessToken");
-          axios
+          this.$axios
             .get(
-              "http://localhost:5000/refresh",
+              "/refresh",
               {
                 headers: {
                   Authorization: "Bearer " + VueCookies.get("refreshToken"),

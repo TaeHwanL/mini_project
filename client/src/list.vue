@@ -186,7 +186,6 @@
 
 <script>
 import PostService from "./PostService";
-import axios from "axios";
 import VueCookies from "vue-cookies";
 
 export default {
@@ -239,8 +238,8 @@ export default {
     },
   },
   async created() {
-    axios
-      .get("http://localhost:5000/getUser", {
+    this.$axios
+      .get("/getUser", {
         headers: {
           Authorization: "Bearer " + VueCookies.get("accessToken"),
         },

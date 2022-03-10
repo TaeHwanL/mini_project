@@ -1,11 +1,12 @@
-import axios from 'axios';
+import axios from 'axios'
+axios.defaults.baseURL = 'http://localhost:5000'
 
 class PostService {
     static getPosts(state, currentPageIndex, complete, searchtxt) {
         return new Promise((resolve, reject) => {
             try {
                 let data = '';
-                axios.get('http://localhost:5000/search?state=' + state + '&page=' + currentPageIndex + '&complete=' + complete + '&searchtxt=' + searchtxt).then(function(response) {
+                axios.get('/search?state=' + state + '&page=' + currentPageIndex + '&complete=' + complete + '&searchtxt=' + searchtxt).then(function(response) {
                     data = response.data;
                     
                     resolve(
@@ -28,7 +29,7 @@ class PostService {
         return new Promise((resolve, reject) => {
             try {
                 let data = '';
-                axios.get('http://localhost:5000/total?state=' + state + '&complete=' + complete + '&searchtxt=' + searchtxt).then(function(response) {
+                axios.get('/total?state=' + state + '&complete=' + complete + '&searchtxt=' + searchtxt).then(function(response) {
                     data = response.data;
                     
                     resolve(
@@ -47,7 +48,7 @@ class PostService {
         return new Promise((resolve, reject) => {
             try {
                 let data = '';
-                axios.get('http://localhost:5000/searchcnt?complete=' + complete + '&searchtxt=' + searchtxt).then(function(response) {
+                axios.get('/searchcnt?complete=' + complete + '&searchtxt=' + searchtxt).then(function(response) {
                     data = response.data;
                     
                     resolve(
